@@ -1,11 +1,19 @@
 import os
 import peewee as pw
 from flask import Flask, Response, request, jsonify
+from flask_cors import CORS
 from peewee import SqliteDatabase, Model
 from datetime import datetime
 import click, csv
 
 app = Flask(__name__, instance_relative_config=True)
+
+try:
+    os.makedirs(app.instance_path)
+except OSError:
+    pass
+
+CORS(app)
 app.config.from_mapping(
     SECRET_KEY='dev', # This is obviously not a good key
     DATABASE=os.path.join(app.instance_path, 'data.db'),
@@ -39,31 +47,35 @@ def init_db_command():
 
 app.cli.add_command(init_db_command)
 
+
 @app.route('/files', methods=['GET', 'POST'])
 def files():
+    """
+    When called as a POST command parses and uploads the csv provided to the database.
+
+    When called as a GET command returns the file names stored in the database.
+    """
     if request.method == 'POST':
         if request.files:
-            name = request.files['data'].filename
-            uploaded_file = request.files['data'].read().decode()
-            csv_readable_file = uploaded_file.split('\n')
-            file = csv.reader(csv_readable_file, delimiter=',')
-            header = next(file)
-            count = 0
-            with db.atomic():
-                for row in file:
-                    count += 1
-                    for i, col in enumerate(row[1:]):
-                        new_row = Data.create(
-                            ts=row[0],
-                            source=name,
-                            measure=header[i+1],
-                            float_value=col
-                        )
-                        new_row.save()
-        
-            return 'Added {0} rows.\n'.format(count)
-        
-        return 'No file provided.\n'
+            for uploaded_file in request.files.getlist('data'):
+                name = uploaded_file.filename
+                print(name)
+                decoded_uploaded_file = uploaded_file.read().decode()
+                csv_readable_file = decoded_uploaded_file.split('\n')
+                file = csv.reader(csv_readable_file, delimiter=',')
+                header = next(file)
+                count = 0
+                with db.atomic():
+                    for row in file:
+                        count += 1
+                        for i, col in enumerate(row[1:]):
+                            new_row = Data.create(
+                                ts=row[0],
+                                source=name,
+                                measure=header[i+1],
+                                float_value=col
+                            )
+                            new_row.save()
 
     filenames = Data.select(Data.source).distinct()
     response = []

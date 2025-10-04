@@ -1,26 +1,63 @@
-#root {
-  width: 100vh;
-  height: 100vh;
+html,
+body{
   margin: 0;
-  padding: 2rem;
-  text-align: center;
+  padding: 0;
+}
+
+#root {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .main{
   display: grid;
   grid-template-columns: 20% 80%;
-}
-
-.sidebar{
-  display: flex;
-  background-color: darkblue;
-  border-radius: 5px;
-  border-width: 2px;
-  border-color: black;
-  justify-content: center;
+  background-color: #ffffff;
+  width: 100%;
   height: 100%;
 }
 
-.filenav{
+.sidebar{
+  text-align: center;
   display: grid;
+  grid-row: 1, auto;
+  grid-template-columns: 100%;
+  background-color: #eaf5ff;
+  border-radius: 5px;
+  border-width: 5px;
+  border-color: black;
+  justify-content: center;
+  align-content: start;
+  height: 100%;
+  margin-top: 0;
+}
+
+.filenav{
+  display: flex;
+  color: black;
+}
+
+.listElement{
+  height: 20px;
+  width: 100%;
+  border: 4px;
+  border-color: black;
+  border-radius: 4px;
+  margin-left: 2px;
+  padding-left: 0;
+  color: black;
+}
+
+.fileList{
+  justify-content: center;
+  list-style-type: none;
+}
+
+button{
+  color: white;
+  background-color: black;
+  border-radius: 4px;
+  border: 4px;
 }
