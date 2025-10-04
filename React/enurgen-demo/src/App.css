@@ -1,0 +1,26 @@
+#root {
+  width: 100vh;
+  height: 100vh;
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
+}
+
+.main{
+  display: grid;
+  grid-template-columns: 20% 80%;
+}
+
+.sidebar{
+  display: flex;
+  background-color: darkblue;
+  border-radius: 5px;
+  border-width: 2px;
+  border-color: black;
+  justify-content: center;
+  height: 100%;
+}
+
+.filenav{
+  display: grid;
+}
