@@ -31,24 +31,13 @@ db.create_tables([Data])
 @click.command('init-db')
 def init_db_command():
     # Clears existing data and creates fresh tables.
+    # Called via: `poetry run flask --app ./src/server.py init-db` from poetry root
     
     db.drop_tables([Data])
     db.create_tables([Data])
     click.echo('Initialized a fresh database.')
 
 app.cli.add_command(init_db_command)
-
-@app.route('/')
-def index():
-    new_test_data = Data.create(
-        ts=datetime.now(),
-        source='file_a.csv',
-        measure='measure_a',
-        float_value=17.223
-    )
-    new_test_data.save()
-    count = Data.select().count()
-    return '{0}'.format(count)
 
 @app.route('/files', methods=['GET', 'POST'])
 def files():
