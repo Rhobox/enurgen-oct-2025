@@ -29,3 +29,7 @@ Not sure if the navbar on the left was for multiple pages later or a quick list 
 There is no method of viewing CSV data that has been processed in-app. I used a sqlite extension on VSCode.
 
 It doesn't filter out duplicates, as there are no constraints given on name. This leaves an unwise amount of responsibility on the user to be aware of what they're uploading as unconstrained data.
+
+To avoid setting up any filtering CORS is unrestricted.
+
+There's cleanup to be done on the frontend, but it functions as expected.

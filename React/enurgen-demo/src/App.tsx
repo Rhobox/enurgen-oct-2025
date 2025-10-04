@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 
 const serverURL = 'http://localhost:5000/files'
@@ -25,12 +25,8 @@ function App() {
     }
 
     const getFileNames = async () => {
-        const headers = new Headers()
-        headers.append('Access-Control-Allow-Origin', 'true')
-
         const response = await fetch(serverURL, {
-            method: 'GET',
-            headers
+            method: 'GET'
         })
 
         const currentFiles = await response.json()
@@ -39,7 +35,6 @@ function App() {
     }
 
     const selectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files)
         if (e.target.files) {
             setSelectedFiles(e.target.files)
         }
