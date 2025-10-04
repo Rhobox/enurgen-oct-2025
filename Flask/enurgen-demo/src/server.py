@@ -1,6 +1,6 @@
 import os
 import peewee as pw
-from flask import Flask, Response, request
+from flask import Flask, Response, request, jsonify
 from peewee import SqliteDatabase, Model
 from datetime import datetime
 import click, csv
@@ -53,18 +53,31 @@ def index():
 @app.route('/files', methods=['GET', 'POST'])
 def files():
     if request.method == 'POST':
-        print(request.files)
         if request.files:
-            uploaded_file = request.files['data']
-            with open(uploaded_file, 'r') as file:
-                print()
+            name = request.files['data'].filename
+            uploaded_file = request.files['data'].read().decode()
+            csv_readable_file = uploaded_file.split('\n')
+            file = csv.reader(csv_readable_file, delimiter=',')
+            header = next(file)
+            count = 0
+            with db.atomic():
+                for row in file:
+                    count += 1
+                    for i, col in enumerate(row[1:]):
+                        new_row = Data.create(
+                            ts=row[0],
+                            source=name,
+                            measure=header[i+1],
+                            float_value=col
+                        )
+                        new_row.save()
         
-        return ''
+            return 'Added {0} rows.\n'.format(count)
+        
+        return 'No file provided.\n'
 
     filenames = Data.select(Data.source).distinct()
     response = []
     for file in filenames:
-        print(file.source)
         response.append(file.source)
-    print(response)
-    return '{0}\n'.format(filenames)
+    return jsonify(fileNames=response)
