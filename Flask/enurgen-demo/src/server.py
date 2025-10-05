@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import click
 import csv
+import time
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -29,6 +30,9 @@ class Data(pw.Model):
     source = pw.TextField()
     measure = pw.TextField()
     float_value = pw.FloatField()
+
+    def __repr__(self):
+        print(self.source, ' ', self.ts)
 
     class Meta:
         database = db
@@ -61,6 +65,7 @@ def files():
             new_rows = [] # For a very large number of rows this may cause memory problems
             for uploaded_file in request.files.getlist('data'):
                 name = uploaded_file.filename
+                print(name)
                 decoded_uploaded_file = uploaded_file.read().decode()
                 csv_readable_file = decoded_uploaded_file.split('\n')
                 file = csv.reader(csv_readable_file, delimiter=',')
@@ -74,8 +79,8 @@ def files():
                             float_value=col
                             ))
                 
-                with db.atomic():
-                    Data.bulk_create(new_rows, batch_size=500)
+            with db.atomic():
+                Data.bulk_create(new_rows, batch_size=500)
 
     filenames = Data.select(Data.source).distinct()
     response = []
