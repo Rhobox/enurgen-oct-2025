@@ -1,0 +1,17 @@
+# docker-compose.yml
+services:
+  frontend:
+    restart: unless-stopped
+    build: ./React/enurgen-demo
+    volumes:
+      - /frontend/node_modules
+      - ./React/enurgen-demo:/frontend
+    ports:
+      - 5173:5173
+  backend:
+    restart: unless-stopped
+    build: ./Flask/enurgen-demo
+    volumes:
+      - ./Flask/enurgen-demo:/backend
+    ports:
+      - 5001:5001
