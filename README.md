@@ -7,19 +7,12 @@
 
 
 ### Shortcuts
-* Uses the flask development server, hosts to localhost
+* Uses the flask development server, hosts to localhost (Docker binds to `0.0.0.0`)
 
+Run the image with:
+`docker compose up --build`
 
-Database can be cleared by deleting the instance folder and restarting the server or by running:
-`poetry run flask --app ./src/server.py init-db` 
-from poetry root (`Flask/enurgen-demo`).
-
-Flask server can be run via:
-`poetry run flask --app ./src/server.py run -p 5001`
-Note that Flask has a default of 5000 which can cause issues on mac.
-
-React frontend can be run with `npm run dev` from `React/enurgen-demo/`
-
+Requires docker.
 
 ## Notes:
 
@@ -27,10 +20,8 @@ Due the nature of timeseries data, and for speed (of insert and development) it 
 
 Not sure if the navbar on the left was for multiple pages later or a quick list of filenames. Given there's one page it populates an alternative file name list.
 
-There is no method of viewing CSV data that has been processed in-app. I used a sqlite extension on VSCode.
+There is no method of viewing CSV data that has been processed in-app. I used a sqlite extension on VSCode to manually verify uploads.
 
 It doesn't filter out duplicates, as there are no constraints given on name. This leaves an unwise amount of responsibility on the user to be aware of what they're uploading as unconstrained data.
 
 To avoid setting up any filtering CORS is unrestricted.
-
-There's cleanup to be done on the frontend, but it functions as expected.
