@@ -15,7 +15,8 @@ Database can be cleared by deleting the instance folder and restarting the serve
 from poetry root (`Flask/enurgen-demo`).
 
 Flask server can be run via:
-`poetry run flask --app ./src/server.py run`
+`poetry run flask --app ./src/server.py run -p 5001`
+Note that Flask has a default of 5000 which can cause issues on mac.
 
 React frontend can be run with `npm run dev` from `React/enurgen-demo/`
 

@@ -1,10 +1,9 @@
 import os
 import peewee as pw
-from flask import Flask, Response, request, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-from peewee import SqliteDatabase, Model
-from datetime import datetime
-import click, csv
+import click
+import csv
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -47,7 +46,6 @@ def init_db_command():
 
 app.cli.add_command(init_db_command)
 
-
 @app.route('/files', methods=['GET', 'POST'])
 def files():
     """
@@ -57,25 +55,27 @@ def files():
     """
     if request.method == 'POST':
         if request.files:
+            if not request.files:
+                return jsonify(error="No files provided")
+            
+            new_rows = [] # For a very large number of rows this may cause memory problems
             for uploaded_file in request.files.getlist('data'):
                 name = uploaded_file.filename
-                print(name)
                 decoded_uploaded_file = uploaded_file.read().decode()
                 csv_readable_file = decoded_uploaded_file.split('\n')
                 file = csv.reader(csv_readable_file, delimiter=',')
                 header = next(file)
-                count = 0
+                for row in file:
+                    for i, col in enumerate(row[1:]):
+                        new_rows.append(Data(
+                            ts=row[0],
+                            source=name,
+                            measure=header[i+1],
+                            float_value=col
+                            ))
+                
                 with db.atomic():
-                    for row in file:
-                        count += 1
-                        for i, col in enumerate(row[1:]):
-                            new_row = Data.create(
-                                ts=row[0],
-                                source=name,
-                                measure=header[i+1],
-                                float_value=col
-                            )
-                            new_row.save()
+                    Data.bulk_create(new_rows, batch_size=500)
 
     filenames = Data.select(Data.source).distinct()
     response = []
